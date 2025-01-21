@@ -1,0 +1,37 @@
+{
+    "Manga": [
+      "Land of Waves", 
+      "Chunin Exams", 
+      "Konoha Crush", 
+      "Invasion of Pain",
+      "4th Ninja War"],
+
+    "Anime": [
+      "Kizuna", 
+      "The Will of Fire", 
+      "The Lost Tower", 
+      "Blood Prison",
+      "The Last"],
+
+    "Art": [
+      "Digital", 
+      "Traditional", 
+      "Concept", 
+      "Statues",
+      "Fan Art"],
+
+    "Shop": [
+      "Apparel", 
+      "Accessories", 
+      "Manga",
+      "Figures", 
+      "Toys"],
+
+    "Login": [
+      "Profile",
+      "Preferences",
+      "Settings",
+      "Help",
+      "Sign Out"]
+  }
+  

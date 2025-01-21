@@ -1,0 +1,38 @@
+{
+    "Jutsu": [
+      "Shadow Clone Jutsu",
+      "Rasengan",
+      "Chidori",
+      "Fireball Jutsu",
+      "Infinite Tsukuyomi"
+    ],
+    "Clans": [
+      "Uchiha Clan",
+      "Senju Clan",
+      "Hyuga Clan",
+      "Uzumaki Clan",
+      "Akimichi Clan"
+    ],
+    "Rivals": [
+      "Rock Lee & Gaara",
+      "Hashirama & Madara",
+      "Sasuke & Itachi",
+      "Naruto & Neji",
+      "Naruto & Sasuke"
+    ],
+    "Legends": [
+      "Hashirama Senju",
+      "Sasuke Uchiha",
+      "Madara Uchiha",
+      "Might Guy",
+      "Minato Namikaze"
+    ],
+    "Villages": [
+      "Hidden Leaf Village",
+      "Hidden Sand Village",
+      "Hidden Mist Village",
+      "Hidden Rain Village",
+      "Hidden Cloud Village"
+    ]
+  }
+  
