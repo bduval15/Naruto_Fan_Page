@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const modal = document.getElementById("articleModal");
     const closeButton = document.querySelector(".close-button");
     const modalContent = document.getElementById("modal-article-content");
+    
 
     function ajaxGET(url, callback) {
         const xhr = new XMLHttpRequest();
@@ -18,27 +19,54 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let cachedArticles = {}; 
 
-function loadArticle(articleId) {
-    if (cachedArticles[articleId]) {
-        console.log(`Using cached article ${articleId}`);
-        modalContent.innerHTML = cachedArticles[articleId];
-        modal.style.display = "block";
-        return;
+    function preloadArticles() {
+        const articleIds = [1, 2, 3, 4];
+        articleIds.forEach(articleId => {
+            fetch(`/data/article${articleId}.html`)
+                .then(response => response.text())
+                .then(htmlContent => {
+                    cachedArticles[articleId] = htmlContent; 
+                    console.log(`Preloaded article ${articleId}`);
+                })
+                .catch(err => console.error(`Error preloading article ${articleId}:`, err));
+        });
     }
 
-    modalContent.innerHTML = "<p>Loading article...</p>"; 
-    fetch(`/data/article${articleId}.html`)
-        .then(response => response.text())
-        .then(htmlContent => {
-            cachedArticles[articleId] = htmlContent; 
-            modalContent.innerHTML = htmlContent;
+    function loadArticle(articleId) {
+        if (cachedArticles[articleId]) {
+            console.log(`Using cached article ${articleId}`);
+            modalContent.innerHTML = cachedArticles[articleId];
             modal.style.display = "block";
-        })
-        .catch(err => {
-            console.error(`Error loading article ${articleId}:`, err);
-            modalContent.innerHTML = "<p>Error loading article.</p>";
+        } else {
+            modalContent.innerHTML = "<p>Loading article...</p>";
+            fetch(`/data/article${articleId}.html`)
+                .then(response => response.text())
+                .then(htmlContent => {
+                    cachedArticles[articleId] = htmlContent; 
+                    modalContent.innerHTML = htmlContent;
+                    modal.style.display = "block";
+                })
+                .catch(err => {
+                    console.error(`Error loading article ${articleId}:`, err);
+                    modalContent.innerHTML = "<p>Error loading article.</p>";
+                });
+        }
+    }
+
+    document.querySelectorAll(".read-more").forEach((link) => {
+        link.addEventListener("click", function (event) {
+            event.preventDefault();
+            const articleId = link.getAttribute("data-article-id");
+            loadArticle(articleId);
         });
-}
+    });
+
+    closeButton.addEventListener("click", function () {
+        modal.style.display = "none";
+    });
+
+    preloadArticles();
+});
 
     
 
@@ -100,47 +128,41 @@ function loadArticle(articleId) {
     }
 
     let images = [];
-let currentIndex = 0;
-const mainImage = document.getElementById("bg2");
-const leftButton = document.getElementById("left-button");
-const rightButton = document.getElementById("right-button");
+    let currentIndex = 0;
+    const mainImage = document.getElementById('bg2');
+    const leftButton = document.getElementById('left-button');
+    const rightButton = document.getElementById('right-button');
 
-fetch("/data/images.json")
-    .then(response => response.json())
-    .then(data => {
-        images = data.images;
-        console.log("Preloading images:", images);
-        images.forEach(src => {
-            const img = new Image();
-            img.src = src;
-        });
+    ajaxGET('/data/images.json', function (data) {
+        images = JSON.parse(data).images;
+        console.log("Loaded images:", images);
 
         mainImage.src = images[currentIndex];
         mainImage.style.opacity = "1";
-    })
-    .catch(err => console.error("Error loading images:", err));
+    });
 
-function changeImage(nextIndex) {
-    mainImage.style.transition = "opacity 0.3s ease-in-out";
-    mainImage.style.opacity = "0";
+    function changeImage() {
+        if (images.length > 0) {
+            mainImage.style.transition = "opacity 0.5s ease-in-out";
+            mainImage.style.opacity = "0";
 
-    setTimeout(() => {
-        currentIndex = nextIndex;
-        mainImage.src = images[currentIndex];
+            setTimeout(() => {
+                mainImage.src = images[currentIndex];
 
-        mainImage.onload = () => {
-            mainImage.style.opacity = "1"; 
-        };
-    }, 300);
-}
+                mainImage.onload = () => {
+                    mainImage.style.opacity = "1";
+                };
+            }, 500);
+        }
+    }
 
-leftButton.addEventListener("click", function () {
-    const nextIndex = (currentIndex - 1 + images.length) % images.length;
-    changeImage(nextIndex);
-});
+    leftButton.addEventListener('click', function () {
+        currentIndex = (currentIndex - 1 + images.length) % images.length;
+        changeImage();
+    });
 
-rightButton.addEventListener("click", function () {
-    const nextIndex = (currentIndex + 1) % images.length;
-    changeImage(nextIndex);
-});
+    rightButton.addEventListener('click', function () {
+        currentIndex = (currentIndex + 1) % images.length;
+        changeImage();
+    });
 
