@@ -30,14 +30,14 @@ app.get("/", (req, res) => {
 // Serve article files
 [1, 2, 3, 4].forEach(num => {
     app.get(`/article${num}`, (req, res) => {
-        res.sendFile(path.join(process.cwd(), "app", "data", `article${num}.html`));
+        res.sendFile(path.join(process.cwd(), "public", "data", `article${num}.html`));
     });
 });
 
 // Fetch Middle Section Data from JSON
 app.get("/data/middle", async (req, res) => {
     try {
-        const dataPath = path.join(process.cwd(), "public", "data", "data.json"); // Fixed path
+        const dataPath = path.join(process.cwd(), "public", "data", "data.json"); 
         const data = await readJSON(dataPath);
         const middleCategories = ["Jutsu", "Clans", "Rivals", "Legends", "Villages"];
         let middleData = {};
@@ -54,7 +54,7 @@ app.get("/data/middle", async (req, res) => {
 // Fetch Sidebar Section Data from JSON
 app.get("/data/sidebar", async (req, res) => {
     try {
-        const dataPath = path.join(process.cwd(), "public", "data", "cat.json"); // Fixed path
+        const dataPath = path.join(process.cwd(), "public", "data", "cat.json"); 
         const data = await readJSON(dataPath);
         const sidebarCategories = ["Manga", "Anime", "Art", "Shop", "Login"];
         let sidebarData = {};
