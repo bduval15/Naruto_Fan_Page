@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const modal = document.getElementById("articleModal");
     const closeButton = document.querySelector(".close-button");
     const modalContent = document.getElementById("modal-article-content");
-    
 
     function ajaxGET(url, callback) {
         const xhr = new XMLHttpRequest();
@@ -17,58 +16,14 @@ document.addEventListener("DOMContentLoaded", function () {
         xhr.send();
     }
 
-    let cachedArticles = {}; 
-
-    function preloadArticles() {
-        const articleIds = [1, 2, 3, 4];
-        articleIds.forEach(articleId => {
-            fetch(`/data/article${articleId}.html`)
-                .then(response => response.text())
-                .then(htmlContent => {
-                    cachedArticles[articleId] = htmlContent; 
-                    console.log(`Preloaded article ${articleId}`);
-                })
-                .catch(err => console.error(`Error preloading article ${articleId}:`, err));
-        });
-    }
-
     function loadArticle(articleId) {
-        if (cachedArticles[articleId]) {
-            console.log(`Using cached article ${articleId}`);
-            modalContent.innerHTML = cachedArticles[articleId];
-            modal.style.display = "block";
-        } else {
-            modalContent.innerHTML = "<p>Loading article...</p>";
-            fetch(`/data/article${articleId}.html`)
-                .then(response => response.text())
-                .then(htmlContent => {
-                    cachedArticles[articleId] = htmlContent; 
-                    modalContent.innerHTML = htmlContent;
-                    modal.style.display = "block";
-                })
-                .catch(err => {
-                    console.error(`Error loading article ${articleId}:`, err);
-                    modalContent.innerHTML = "<p>Error loading article.</p>";
-                });
-        }
-    }
-
-    document.querySelectorAll(".read-more").forEach((link) => {
-        link.addEventListener("click", function (event) {
-            event.preventDefault();
-            const articleId = link.getAttribute("data-article-id");
-            loadArticle(articleId);
-        });
+    ajaxGET(`/data/article${articleId}.html`, function (htmlContent) { 
+        console.log("Article loaded:", htmlContent);
+        modalContent.innerHTML = htmlContent;
+        modal.style.display = "block";
     });
+}
 
-    closeButton.addEventListener("click", function () {
-        modal.style.display = "none";
-    });
-
-    preloadArticles();
-});
-
-    
 
     document.querySelectorAll(".read-more").forEach((link) => {
         link.addEventListener("click", function (event) {
@@ -165,4 +120,4 @@ document.addEventListener("DOMContentLoaded", function () {
         currentIndex = (currentIndex + 1) % images.length;
         changeImage();
     });
-
+});
