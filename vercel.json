@@ -6,5 +6,7 @@
       "use": "@vercel/node"
     }
   ],
-  "includeFiles": ["app/data/*"]
+  "routes": [
+    { "src": "/data/(.*)", "dest": "/api/server.js" }
+  ]
 }
