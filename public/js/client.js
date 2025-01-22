@@ -17,12 +17,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function loadArticle(articleId) {
-        ajaxGET(`/article${articleId}`, function (htmlContent) {
+        ajaxGET(`/data/article${articleId}.html`, function (htmlContent) { 
             console.log("Article loaded:", htmlContent);
             modalContent.innerHTML = htmlContent;
             modal.style.display = "block";
         });
     }
+    
 
     document.querySelectorAll(".read-more").forEach((link) => {
         link.addEventListener("click", function (event) {
