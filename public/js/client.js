@@ -16,13 +16,30 @@ document.addEventListener("DOMContentLoaded", function () {
         xhr.send();
     }
 
-    function loadArticle(articleId) {
-        ajaxGET(`/data/article${articleId}.html`, function (htmlContent) { 
-            console.log("Article loaded:", htmlContent);
+    let cachedArticles = {}; 
+
+function loadArticle(articleId) {
+    if (cachedArticles[articleId]) {
+        console.log(`Using cached article ${articleId}`);
+        modalContent.innerHTML = cachedArticles[articleId];
+        modal.style.display = "block";
+        return;
+    }
+
+    modalContent.innerHTML = "<p>Loading article...</p>"; 
+    fetch(`/data/article${articleId}.html`)
+        .then(response => response.text())
+        .then(htmlContent => {
+            cachedArticles[articleId] = htmlContent; 
             modalContent.innerHTML = htmlContent;
             modal.style.display = "block";
+        })
+        .catch(err => {
+            console.error(`Error loading article ${articleId}:`, err);
+            modalContent.innerHTML = "<p>Error loading article.</p>";
         });
-    }
+}
+
     
 
     document.querySelectorAll(".read-more").forEach((link) => {
@@ -83,41 +100,47 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     let images = [];
-    let currentIndex = 0;
-    const mainImage = document.getElementById('bg2');
-    const leftButton = document.getElementById('left-button');
-    const rightButton = document.getElementById('right-button');
+let currentIndex = 0;
+const mainImage = document.getElementById("bg2");
+const leftButton = document.getElementById("left-button");
+const rightButton = document.getElementById("right-button");
 
-    ajaxGET('/data/images.json', function (data) {
-        images = JSON.parse(data).images;
-        console.log("Loaded images:", images);
+fetch("/data/images.json")
+    .then(response => response.json())
+    .then(data => {
+        images = data.images;
+        console.log("Preloading images:", images);
+        images.forEach(src => {
+            const img = new Image();
+            img.src = src;
+        });
 
         mainImage.src = images[currentIndex];
         mainImage.style.opacity = "1";
-    });
+    })
+    .catch(err => console.error("Error loading images:", err));
 
-    function changeImage() {
-        if (images.length > 0) {
-            mainImage.style.transition = "opacity 0.5s ease-in-out";
-            mainImage.style.opacity = "0";
+function changeImage(nextIndex) {
+    mainImage.style.transition = "opacity 0.3s ease-in-out";
+    mainImage.style.opacity = "0";
 
-            setTimeout(() => {
-                mainImage.src = images[currentIndex];
+    setTimeout(() => {
+        currentIndex = nextIndex;
+        mainImage.src = images[currentIndex];
 
-                mainImage.onload = () => {
-                    mainImage.style.opacity = "1";
-                };
-            }, 500);
-        }
-    }
+        mainImage.onload = () => {
+            mainImage.style.opacity = "1"; 
+        };
+    }, 300);
+}
 
-    leftButton.addEventListener('click', function () {
-        currentIndex = (currentIndex - 1 + images.length) % images.length;
-        changeImage();
-    });
-
-    rightButton.addEventListener('click', function () {
-        currentIndex = (currentIndex + 1) % images.length;
-        changeImage();
-    });
+leftButton.addEventListener("click", function () {
+    const nextIndex = (currentIndex - 1 + images.length) % images.length;
+    changeImage(nextIndex);
 });
+
+rightButton.addEventListener("click", function () {
+    const nextIndex = (currentIndex + 1) % images.length;
+    changeImage(nextIndex);
+});
+
