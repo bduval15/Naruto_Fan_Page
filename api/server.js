@@ -7,7 +7,7 @@ const path = require("path");
 app.use("/js", express.static(path.join(process.cwd(), "public", "js")));
 app.use("/css", express.static(path.join(process.cwd(), "public", "css")));
 app.use("/img", express.static(path.join(process.cwd(), "public", "img")));
-app.use("/data", express.static(path.join(process.cwd(), "app", "data")));
+app.use("/data", express.static(path.join(process.cwd(), "public", "data"))); // Updated path
 
 // Function to read JSON data
 const readJSON = (filePath) => {
@@ -24,7 +24,7 @@ const readJSON = (filePath) => {
 
 // Serve HTML files
 app.get("/", (req, res) => {
-    res.sendFile(path.join(process.cwd(), "app", "html", "index.html"));
+    res.sendFile(path.join(process.cwd(), "public", "index.html"));
 });
 
 // Serve article files
@@ -37,7 +37,7 @@ app.get("/", (req, res) => {
 // Fetch Middle Section Data from JSON
 app.get("/data/middle", async (req, res) => {
     try {
-        const dataPath = path.join(process.cwd(), "app", "data", "data.json");
+        const dataPath = path.join(process.cwd(), "public", "data", "data.json"); // Fixed path
         const data = await readJSON(dataPath);
         const middleCategories = ["Jutsu", "Clans", "Rivals", "Legends", "Villages"];
         let middleData = {};
@@ -47,14 +47,14 @@ app.get("/data/middle", async (req, res) => {
         res.json(middleData);
     } catch (error) {
         console.error("Error fetching middle data:", error);
-        res.status(500).send("Error reading middle data");
+        res.status(500).json({ error: "Error reading middle data" });
     }
 });
 
 // Fetch Sidebar Section Data from JSON
 app.get("/data/sidebar", async (req, res) => {
     try {
-        const dataPath = path.join(process.cwd(), "app", "data", "cat.json");
+        const dataPath = path.join(process.cwd(), "public", "data", "cat.json"); // Fixed path
         const data = await readJSON(dataPath);
         const sidebarCategories = ["Manga", "Anime", "Art", "Shop", "Login"];
         let sidebarData = {};
@@ -64,25 +64,25 @@ app.get("/data/sidebar", async (req, res) => {
         res.json(sidebarData);
     } catch (error) {
         console.error("Error fetching sidebar data:", error);
-        res.status(500).send("Error reading sidebar data");
+        res.status(500).json({ error: "Error reading sidebar data" });
     }
 });
 
 // Fetch images from JSON
-app.get('/data/images', async (req, res) => {
+app.get("/data/images", async (req, res) => {
     try {
-        const dataPath = path.join(process.cwd(), "app", "data", "images.json");
+        const dataPath = path.join(process.cwd(), "public", "data", "images.json"); // Fixed path
         const data = await readJSON(dataPath);
         res.json(data);
     } catch (error) {
         console.error("Error reading images JSON:", error);
-        res.status(500).send("Error reading images data");
+        res.status(500).json({ error: "Error reading images data" });
     }
 });
 
 // Handle 404 errors
 app.use((req, res) => {
-    res.status(404).send("<html><head><title>Page not found!</title></head><body><p>Nothing here.</p></body></html>");
+    res.status(404).json({ error: "Page not found" });
 });
 
 // Export Express app for Vercel
