@@ -4,11 +4,8 @@ const path = require("path");
 
 const app = express();
 
-// Serve static files
-app.use("/js", express.static(path.join(__dirname, "..", "public", "js")));
-app.use("/css", express.static(path.join(__dirname, "..", "public", "css")));
-app.use("/img", express.static(path.join(__dirname, "..", "public", "img")));
-app.use("/data", express.static(path.join(__dirname, "..", "app", "data")));
+// Serve static files from 'public' directory
+app.use(express.static(path.join(__dirname, "..", "public")));
 
 // Function to read JSON data
 const readJSON = (filePath) => {
@@ -23,16 +20,17 @@ const readJSON = (filePath) => {
     });
 };
 
-// Serve HTML files
+// Serve Home Page
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "..", "app", "html", "index.html"));
+    res.sendFile(path.join(__dirname, "..", "public", "index.html"));
 });
 
+// Serve Profile Page
 app.get("/profile", (req, res) => {
-    res.sendFile(path.join(__dirname, "..", "app", "html", "profile.html"));
+    res.sendFile(path.join(__dirname, "..", "public", "profile.html"));
 });
 
-// Serve article files
+// Serve article pages
 [1, 2, 3, 4].forEach(num => {
     app.get(`/article${num}`, (req, res) => {
         res.sendFile(path.join(__dirname, "..", "app", "data", `article${num}.html`));
@@ -52,7 +50,7 @@ app.get("/data/middle", async (req, res) => {
         res.json(middleData);
     } catch (error) {
         console.error("Error fetching middle data:", error);
-        res.status(500).send("Error reading middle data");
+        res.status(500).json({ error: "Error reading middle data" });
     }
 });
 
@@ -69,11 +67,11 @@ app.get("/data/sidebar", async (req, res) => {
         res.json(sidebarData);
     } catch (error) {
         console.error("Error fetching sidebar data:", error);
-        res.status(500).send("Error reading sidebar data");
+        res.status(500).json({ error: "Error reading sidebar data" });
     }
 });
 
-// Fetch images from JSON
+// Fetch Images from JSON
 app.get('/data/images', async (req, res) => {
     try {
         const dataPath = path.join(__dirname, "..", "app", "data", "images.json");
@@ -81,13 +79,13 @@ app.get('/data/images', async (req, res) => {
         res.json(data);
     } catch (error) {
         console.error('Error reading images JSON:', error);
-        res.status(500).send('Error reading images data');
+        res.status(500).json({ error: "Error reading images data" });
     }
 });
 
 // Handle 404 errors
 app.use((req, res) => {
-    res.status(404).send("<html><head><title>Page not found!</title></head><body><p>Nothing here.</p></body></html>");
+    res.status(404).json({ error: "Page not found" });
 });
 
 // Export the Express app for Vercel
