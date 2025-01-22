@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
         modal.style.display = "none";
     });
 
-    fetch("/data/sidebar")
+    fetch("/data/cat.json") 
         .then(response => response.json())
         .then(data => {
             console.log("Fetched Sidebar Data:", data);
@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .catch(err => console.error("Error loading sidebar data:", err));
 
-    fetch("/data/middle")
+    fetch("/data/data.json") 
         .then(response => response.json())
         .then(data => {
             console.log("Fetched Middle Data:", data);
